@@ -1,4 +1,3 @@
-
 class ShiftCipher:
     """
     ShiftCipher class (TO BE COMPLETED).
@@ -8,7 +7,6 @@ class ShiftCipher:
         offset (int): The ASCII value of the letter 'A'. A static utility attribute to help you calculate
             a letter's position in the alphabet from 0 (A) to 25 (Z).
     """
-
     offset = ord('A')
 
     def __init__(self, shift: int):
@@ -32,7 +30,23 @@ class ShiftCipher:
         str
             The shifted letter.
         """
+
         shifted_letter = ''
+
+        K = self.shift
+        P = 0
+        C = 0
+        
+        if forward:
+            P = ord(letter) - self.offset
+            C = (P + K) % 26
+            shifted_letter += chr(C + self.offset)
+        
+        else:
+            C = ord(letter) - self.offset
+            P = (C - K) % 26
+            shifted_letter += chr(P + self.offset)
+
         return shifted_letter
 
     def encrypt(self, plaintext: str):
@@ -56,6 +70,15 @@ class ShiftCipher:
             The ciphertext string.
         """
         ciphertext = ''
+        plaintext_upper = plaintext.upper()
+
+        for character in plaintext_upper:
+            current = character
+            if current.isalpha():
+                current = self.__shift_letter(letter=character, forward=True)
+
+            ciphertext += current  
+
         return ciphertext
 
     def decrypt(self, ciphertext: str):
@@ -79,6 +102,15 @@ class ShiftCipher:
             The plaintext string.
         """
         plaintext = ''
+        ciphertext_upper = ciphertext.upper()
+
+        for character in ciphertext_upper:
+            current = character
+            if current.isalpha():
+                current = self.__shift_letter(letter=character, forward=False)
+
+            plaintext += current  
+
         return plaintext
 
 

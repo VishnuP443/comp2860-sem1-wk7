@@ -35,6 +35,17 @@ class VigenereCipher:
             The shifted letter.
         """
         shifted_letter = ''
+
+        if forward:
+            P = ord(letter) - self.offset
+            position = (P + shift) % 26
+            shifted_letter += chr(position + self.offset)
+        
+        else:
+            C = ord(letter) - self.offset
+            position = (C - shift) % 26
+            shifted_letter += chr(position + self.offset)
+
         return shifted_letter
 
     def __generate_shift_list(self, plaintext_length: int):
@@ -59,6 +70,10 @@ class VigenereCipher:
             A list of shifts (integers).
         """
         shift_list = []
+        for i in range(plaintext_length):
+            current_char = self.keyword[i % len(self.keyword)]
+            shift_list.append( (ord(current_char) - self.offset))
+
         return shift_list
 
     def encrypt(self, plaintext: str):
@@ -83,6 +98,18 @@ class VigenereCipher:
             The ciphertext string.
         """
         ciphertext = ''
+
+        plaintext_upper = plaintext.upper()
+        shift_list = self.__generate_shift_list(plaintext_length=len(plaintext))
+        current_shift_index = 0
+
+        for character in plaintext_upper:
+            current = character
+            if current.isalpha():
+                current = self.__shift_letter(letter=current, shift=shift_list[current_shift_index], forward=True)
+                current_shift_index += 1
+                ciphertext += current
+
         return ciphertext
 
     def decrypt(self, ciphertext: str):
@@ -110,6 +137,18 @@ class VigenereCipher:
             The plaintext string.
         """
         plaintext = ''
+        
+        ciphertext_upper = ciphertext.upper()
+        shift_list = self.__generate_shift_list(plaintext_length=len(ciphertext))
+        current_shift_index = 0
+
+        for character in ciphertext_upper:
+            current = character
+            if current.isalpha():
+                current = self.__shift_letter(letter=current, shift=shift_list[current_shift_index], forward=False)
+                current_shift_index += 1
+                plaintext += current
+
         return plaintext
 
 
